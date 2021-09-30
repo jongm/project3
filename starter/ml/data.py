@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder, StandardScaler
 
 
@@ -18,6 +19,7 @@ def process_data(
     ------
     X : pd.DataFrame
         Dataframe containing the features and label. Columns in `categorical_features`
+        Can be a dict, then it will be transformed to a DF
     categorical_features: list[str]
         List containing the names of the categorical features (default=[])
     label : str
@@ -43,6 +45,14 @@ def process_data(
         Trained LabelBinarizer if training is True, otherwise returns the binarizer
         passed in.
     """
+
+    # If given a dict, converts to pd DataFrame:
+    if isinstance(X, dict):
+        X = pd.DataFrame(X, index=[0])
+
+    # Changes column names from "_" to "-" since pydantic BaseModel does
+    # not allow "-" in field names:
+    X.columns = [col.replace("_", "-") for col in X.columns]
 
     if label is not None:
         y = X[label]

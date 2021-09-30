@@ -43,9 +43,9 @@ def test_compute_model_metrics():
     fake_y = [1,1,1,0,0,1,1,1]
     fake_preds = [1,0,1,0,1,0,1,0]
 
-    p, r, fb =  compute_model_metrics(fake_y, fake_preds)
+    prec, rec, fb =  compute_model_metrics(fake_y, fake_preds)
 
-    assert all([p == 0.75, r == 0.5, fb == 0.6])
+    assert all([prec == 0.75, rec == 0.5, fb == 0.6])
 
 
 def test_inference():
