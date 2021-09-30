@@ -54,10 +54,11 @@ def kfold_validation(data):
 
         # Measuring model performance:
         predictions = inference(model, X_val)
-        precision, recall, fbeta = compute_model_metrics(y_val, predictions)
+        precision, recall, fbeta, FPR = compute_model_metrics(y_val, predictions)
         kfold_results.append({"precision":precision,
                               "recall":recall,
-                              "fbeta":fbeta,})
+                              "fbeta":fbeta,
+                              "false_positive_rate":FPR})
 
     # Summary of cross validation:
     kfold_results = pd.DataFrame(kfold_results).mean()
