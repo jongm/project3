@@ -100,4 +100,4 @@ if __name__=="__main__":
     # Loading the data:
     data = pd.read_csv("census_clean.csv")
 
-    train_final_model(data, cat_features)
+    train_final_model(data)
