@@ -30,27 +30,47 @@ app = FastAPI()
 
 class PostBody(BaseModel):
 
-     age: int
-     workclass: str
-     fnlwgt: int
-     education: str
-     education_num: int
-     marital_status: str
-     occupation: str
-     relationship: str
-     race: str
-     sex: str
-     capital_gain: int
-     capital_loss: int
-     hours_per_week: int
-     native_country: str
+    age: int
+    workclass: str
+    fnlwgt: int
+    education: str
+    education_num: int
+    marital_status: str
+    occupation: str
+    relationship: str
+    race: str
+    sex: str
+    capital_gain: int
+    capital_loss: int
+    hours_per_week: int
+    native_country: str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                'age': 38,
+                'workclass': 'Private',
+                'fnlwgt': 215646,
+                'education': 'HS-grad',
+                'education_num': 9,
+                'marital_status': 'Divorced',
+                'occupation': 'Handlers-cleaners',
+                'relationship': 'Not-in-family',
+                'race': 'White',
+                'sex': 'Male',
+                'capital_gain': 0,
+                'capital_loss': 0,
+                'hours_per_week': 40,
+                'native_country': 'United-States'
+                }
+        }
 
 
 # Main route:
 @app.get("/")
 async def return_greetings():
 
-    return "Welcome to the API"
+    return "Welcome to the inference API!"
 
 
 # Inference route:
@@ -70,5 +90,6 @@ async def model_inference(data: PostBody):
     )
 
     pred = model.predict(data)
+    pred = lb.inverse_transform(pred)
 
-    return pred.tolist()
+    return {"prediction":pred.tolist()}

@@ -14,14 +14,14 @@ def fake_data():
     """
     Fake data for model training
     """
-    fake_data = pd.DataFrame({
+    df = pd.DataFrame({
         "var1":[1,2,-3,-1,2,3],
         "var2":[0,0,0,1,1,1],
         "var3":[2.7,1.5,-0.8,0.2,-2,0.3],
         "label":[1,1,1,1,0,0]
     })
 
-    return fake_data
+    return df
 
 
 def test_train_model(fake_data):
@@ -49,7 +49,7 @@ def test_compute_model_metrics():
     assert all([prec == 0.75, rec == 0.5, fb == 0.6, FPR == 0.5])
 
 
-def test_inference():
+def test_inference(fake_data):
 
     X_fake = fake_data.copy()
     y_fake = X_fake.pop("label")
