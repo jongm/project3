@@ -101,4 +101,8 @@ if __name__=="__main__":
     # Loading the data:
     data = pd.read_csv("census_clean.csv")
 
+    # Printing model performance:
+    kfold_validation(data)
+
+    # Training and saving final model
     train_final_model(data)

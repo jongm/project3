@@ -9,16 +9,16 @@ body = {
     'workclass': 'Private',
     'fnlwgt': 215646,
     'education': 'HS-grad',
-    'education_num': 9,
-    'marital_status': 'Divorced',
+    'education-num': 9,
+    'marital-status': 'Divorced',
     'occupation': 'Handlers-cleaners',
     'relationship': 'Not-in-family',
     'race': 'White',
     'sex': 'Male',
-    'capital_gain': 0,
-    'capital_loss': 0,
-    'hours_per_week': 40,
-    'native_country': 'United-States'
+    'capital-gain': 0,
+    'capital-loss': 0,
+    'hours-per-week': 40,
+    'native-country': 'United-States'
 }
 
 resp = requests.post("https://project3-inference.herokuapp.com/inference", json=body)

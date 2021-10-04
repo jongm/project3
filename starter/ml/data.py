@@ -50,10 +50,6 @@ def process_data(
     if isinstance(X, dict):
         X = pd.DataFrame(X, index=[0])
 
-    # Changes column names from "_" to "-" since pydantic BaseModel does
-    # not allow "-" in field names:
-    X.columns = [col.replace("_", "-") for col in X.columns]
-
     if label is not None:
         y = X[label]
         X = X.drop([label], axis=1)

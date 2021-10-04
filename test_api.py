@@ -14,28 +14,54 @@ def test_get():
     assert r.json() ==  "Welcome to the inference API!"
 
 
-def test_post_correct():
+def test_post_more_than_50k():
 
     body = {
-        'age': 38,
+        'age': 35,
         'workclass': 'Private',
         'fnlwgt': 215646,
-        'education': 'HS-grad',
-        'education_num': 9,
-        'marital_status': 'Divorced',
-        'occupation': 'Handlers-cleaners',
+        'education': 'Masters',
+        'education-num': 12,
+        'marital-status': 'Never-married',
+        'occupation': 'Sales',
         'relationship': 'Not-in-family',
         'race': 'White',
         'sex': 'Male',
-        'capital_gain': 0,
-        'capital_loss': 0,
-        'hours_per_week': 40,
-        'native_country': 'United-States'
+        'capital-gain': 50000,
+        'capital-loss': 3000,
+        'hours-per-week': 50,
+        'native-country': 'United-States'
     }
 
     r = client.post("/inference", json=body)
     assert r.status_code == 200
     assert isinstance(r.json()["prediction"], list)
+    assert r.json()["prediction"][0] == ">50K"
+
+
+def test_post_less_than_50k():
+
+    body = {
+        'age': 19,
+        'workclass': 'Private',
+        'fnlwgt': 215646,
+        'education': 'HS-grad',
+        'education-num': 9,
+        'marital-status': 'Never-married',
+        'occupation': 'Handlers-cleaners',
+        'relationship': 'Not-in-family',
+        'race': 'Asian-Pac-Islander',
+        'sex': 'Male',
+        'capital-gain': 0,
+        'capital-loss': 0,
+        'hours-per-week': 30,
+        'native-country': 'Peru'
+    }
+
+    r = client.post("/inference", json=body)
+    assert r.status_code == 200
+    assert isinstance(r.json()["prediction"], list)
+    assert r.json()["prediction"][0] == "<=50K"
 
 
 def test_post_wrong():

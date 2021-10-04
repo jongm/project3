@@ -11,7 +11,7 @@ if "DYNO" in os.environ and os.path.isdir(".dvc"):
     os.system("rm -r .dvc .apt/usr/lib/dvc")
 
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from starter.ml.data import process_data
 from starter.train_model import cat_features
@@ -40,16 +40,16 @@ class PostBody(BaseModel):
     workclass: str
     fnlwgt: int
     education: str
-    education_num: int
-    marital_status: str
+    education_num: int = Field(alias="education-num")
+    marital_status: str = Field(alias="marital-status")
     occupation: str
     relationship: str
     race: str
     sex: str
-    capital_gain: int
-    capital_loss: int
-    hours_per_week: int
-    native_country: str
+    capital_gain: int = Field(alias="capital-gain")
+    capital_loss: int = Field(alias="capital-loss")
+    hours_per_week: int = Field(alias="hours-per-week")
+    native_country: str = Field(alias="native-country")
 
     class Config:
         schema_extra = {
@@ -58,16 +58,16 @@ class PostBody(BaseModel):
                 'workclass': 'Private',
                 'fnlwgt': 215646,
                 'education': 'HS-grad',
-                'education_num': 9,
-                'marital_status': 'Divorced',
+                'education-num': 9,
+                'marital-status': 'Divorced',
                 'occupation': 'Handlers-cleaners',
                 'relationship': 'Not-in-family',
                 'race': 'White',
                 'sex': 'Male',
-                'capital_gain': 0,
-                'capital_loss': 0,
-                'hours_per_week': 40,
-                'native_country': 'United-States'
+                'capital-gain': 0,
+                'capital-loss': 0,
+                'hours-per-week': 40,
+                'native-country': 'United-States'
                 }
         }
 
@@ -83,7 +83,7 @@ async def return_greetings():
 @app.post("/inference")
 async def model_inference(data: PostBody):
 
-    data = data.dict()
+    data = data.dict(by_alias=True)
 
     data, y, encoder_ret, lb_ret, scaler_ret = process_data(
         data,

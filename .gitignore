@@ -1,2 +1,4 @@
 /census.csv
 /census_clean.csv
+*.pyc
+*.pyc

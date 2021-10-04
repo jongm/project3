@@ -2,53 +2,48 @@
 Code for checking model performance on different slices
 """
 
+import pickle
+import os
+
 import pandas as pd
-from sklearn.model_selection import train_test_split
 
-from starter.ml.model import train_model, compute_model_metrics, inference
+from starter.ml.model import compute_model_metrics, inference
 from starter.ml.data import process_data
+from starter.train_model import cat_features
 
-# Categorical features:
-cat_features = [
-    "workclass",
-    "education",
-    "marital-status",
-    "occupation",
-    "relationship",
-    "race",
-    "sex",
-    "native-country"
-]
 
-def check_slices_performance(data):
+def check_slices_performance(data, model_path):
 
-    train_data, val_data = train_test_split(data, test_size=0.2, random_state=777)
+    # Loading model and encoders:
+    with open(os.path.join(model_path, "inference_model.pkl"), "rb") as file:
+        model = pickle.load(file)
 
-    # Processing training data:
-    X_train, y_train, encoder, lb, scaler = process_data(
-        train_data, categorical_features=cat_features, label="salary", training=True
-    )
+    with open(os.path.join(model_path, "onehot_encoder.pkl"), "rb") as file:
+        encoder = pickle.load(file)
 
-    # Processing validation data:
+    with open(os.path.join(model_path, "label_encoder.pkl"), "rb") as file:
+        lb = pickle.load(file)
+
+    with open(os.path.join(model_path, "scaler.pkl"), "rb") as file:
+        scaler = pickle.load(file)
+
+    # Processing data:
     X_val, y_val, encoder, lb, scaler = process_data(
-        val_data, categorical_features=cat_features, label="salary", training=False,
-        encoder=encoder, lb=lb, scaler=scaler
+        data, categorical_features=cat_features, label="salary",
+        training=False, encoder=encoder, lb=lb, scaler=scaler
     )
-
-    # Creating and fitting model:
-    model = train_model(X_train, y_train)
 
     # Measuring model performance:
     predictions = inference(model, X_val)
 
-    val_data["pred"] = predictions
-    val_data["label"] = lb.transform(val_data["salary"])
+    data["pred"] = predictions
+    data["label"] = lb.transform(data["salary"])
 
     # Calculating slice results:
     slice_results = pd.DataFrame()
     for group in cat_features:
 
-        performance = val_data.groupby(group).apply(
+        performance = data.groupby(group).apply(
             lambda df: compute_model_metrics(df["label"], df["pred"], as_df=True)
         )
         performance = performance.droplevel(1)
@@ -66,8 +61,10 @@ if __name__=="__main__":
 
     # Loading the data:
     data = pd.read_csv("census_clean.csv")
+    model_path = "./models"
 
-    output = check_slices_performance(data)
+    # Calculating slice performance:
+    output = check_slices_performance(data, model_path)
 
     # Printing results to file:
     pd.set_option('display.max_rows', None)
